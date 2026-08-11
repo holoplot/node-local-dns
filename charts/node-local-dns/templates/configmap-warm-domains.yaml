@@ -1,0 +1,14 @@
+{{- if .Values.cacheWarmer.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "node-local-dns.fullname" . }}-warm-domains
+  namespace: kube-system
+  labels:
+    {{- include "node-local-dns.labels" . | nindent 4 }}
+data:
+  domains: |
+    {{- range .Values.cacheWarmer.domains }}
+    {{ . }}
+    {{- end }}
+{{- end }}

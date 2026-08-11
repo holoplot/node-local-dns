@@ -77,6 +77,23 @@ config:
   # -- Allows for configuration of upstream server forwarding for the default server block
   upstreamForwardConfig: {}
 
+cacheWarmer:
+  # -- Run a sidecar that keeps `domains` cached and fresh on every node.
+  enabled: false
+  image:
+    repository: busybox
+    tag: "1.37"
+  # -- Seconds between warm passes.
+  interval: 30
+  # -- Domains to query against the local cache on every pass.
+  domains: []
+  resources:
+    requests:
+      cpu: 5m
+      memory: 16Mi
+    limits:
+      memory: 16Mi
+
 nameOverride: ""
 fullnameOverride: ""
 
