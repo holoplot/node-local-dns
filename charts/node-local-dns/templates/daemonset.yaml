@@ -34,7 +34,7 @@ spec:
         {{- if .Values.cacheWarmer.enabled }}
         checksum/warm-domains: {{ include (print $.Template.BasePath "/configmap-warm-domains.yaml") . | sha256sum }}
         {{- end }}
-        {{- if and (not .Values.serviceMonitor.enabled) .Values.prometheusScraping.enabled }}
+        {{- if .Values.prometheusScraping.enabled }}
         prometheus.io/port: "9253"
         prometheus.io/scrape: "true"
         {{- end }}
