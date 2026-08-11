@@ -31,3 +31,6 @@ against the local cache each `interval` seconds. Combined with
 cache; with `config.serveStale` they remain resolvable during upstream
 outages. Changing `domains` re-renders a ConfigMap whose checksum is
 annotated on the pod template, so the DaemonSet rolls automatically.
+
+The warmer runs as a native sidecar container (an init container with
+`restartPolicy: Always`), which requires Kubernetes >= 1.29.

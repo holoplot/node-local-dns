@@ -12,6 +12,11 @@ tests:
           path: spec.template.spec.initContainers
       - notExists:
           path: spec.template.metadata.annotations.checksum/warm-domains
+      - notContains:
+          path: spec.template.spec.volumes
+          content:
+            name: warm-domains
+          any: true
 
   - it: always carries a Corefile checksum annotation
     template: daemonset.yaml
