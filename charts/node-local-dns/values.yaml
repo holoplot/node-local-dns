@@ -82,7 +82,7 @@ cacheWarmer:
   enabled: false
   image:
     repository: busybox
-    tag: "1.37"
+    tag: "1.38"
   # -- Seconds between warm passes.
   interval: 30
   # -- Domains to query against the local cache on every pass.
