@@ -41,6 +41,9 @@ data:
     {{- end }}
         forward . __PILLAR__CLUSTER__DNS__ {
                 {{ .Values.config.commProtocol }}
+        {{- range .Values.config.clusterDnsForwardConfig }}
+                {{ . }}
+        {{- end }}
         }
     {{- if .Values.config.noIPv6Lookups }}
         template IN AAAA {
@@ -73,6 +76,9 @@ data:
     {{- end }}
         forward . __PILLAR__CLUSTER__DNS__ {
                 {{ .Values.config.commProtocol }}
+        {{- range .Values.config.clusterDnsForwardConfig }}
+                {{ . }}
+        {{- end }}
         }
     {{- if .Values.config.noIPv6Lookups }}
         template IN AAAA {
@@ -104,6 +110,9 @@ data:
     {{- end }}
         forward . __PILLAR__CLUSTER__DNS__ {
                 {{ .Values.config.commProtocol }}
+        {{- range .Values.config.clusterDnsForwardConfig }}
+                {{ . }}
+        {{- end }}
         }
     {{- if .Values.config.noIPv6Lookups }}
         template IN AAAA {

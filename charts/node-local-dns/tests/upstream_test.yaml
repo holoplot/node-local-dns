@@ -1,0 +1,47 @@
+suite: upstream (cluster DNS) forwarding
+templates:
+  - configmap.yaml
+  - service-upstream.yaml
+release:
+  name: node-local-dns
+tests:
+  - it: sets no traffic distribution on the upstream service by default
+    template: service-upstream.yaml
+    asserts:
+      - notExists:
+          path: spec.trafficDistribution
+
+  - it: sets the traffic distribution on the upstream service
+    template: service-upstream.yaml
+    set:
+      config:
+        upstreamServiceTrafficDistribution: PreferSameNode
+    asserts:
+      - equal:
+          path: spec.trafficDistribution
+          value: PreferSameNode
+
+  - it: forwards to the cluster DNS with only the protocol by default
+    template: configmap.yaml
+    asserts:
+      - matchRegex:
+          path: data.Corefile
+          pattern: 'forward \. __PILLAR__CLUSTER__DNS__ \{\n\s+force_tcp\n\s+\}'
+      - notMatchRegex:
+          path: data.Corefile
+          pattern: failfast_all_unhealthy_upstreams
+
+  - it: adds the cluster forward options to the cluster domain and both reverse zones
+    template: configmap.yaml
+    set:
+      config:
+        clusterDnsForwardConfig:
+          - failfast_all_unhealthy_upstreams
+    asserts:
+      # cluster.local, in-addr.arpa and ip6.arpa; not the default block, which has upstreamForwardConfig.
+      - matchRegex:
+          path: data.Corefile
+          pattern: '(?s)cluster\.local:53 \{.*forward \. __PILLAR__CLUSTER__DNS__ \{\n\s+force_tcp\n\s+failfast_all_unhealthy_upstreams\n\s+\}.*in-addr\.arpa:53 \{.*forward \. __PILLAR__CLUSTER__DNS__ \{\n\s+force_tcp\n\s+failfast_all_unhealthy_upstreams\n\s+\}.*ip6\.arpa:53 \{.*forward \. __PILLAR__CLUSTER__DNS__ \{\n\s+force_tcp\n\s+failfast_all_unhealthy_upstreams\n\s+\}.*\.:53 \{'
+      - notMatchRegex:
+          path: data.Corefile
+          pattern: '(?s)\n    \.:53 \{.*failfast_all_unhealthy_upstreams'

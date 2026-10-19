@@ -7,6 +7,9 @@ metadata:
   labels:
     {{- include "node-local-dns.labels" . | nindent 4 }}
 spec:
+  {{- with .Values.config.upstreamServiceTrafficDistribution }}
+  trafficDistribution: {{ . }}
+  {{- end }}
   ports:
   - name: {{ .Values.config.port.udp }}
     port: 53

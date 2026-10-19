@@ -20,6 +20,10 @@ config:
   upstreamServiceSelector:
     k8s-app: kube-dns
 
+  # -- `trafficDistribution` of the upstream service, e.g. `PreferSameNode` to ask the cluster DNS pod on the
+  # same node first (needs Kubernetes >= 1.35, or the PreferSameTrafficDistribution feature gate).
+  upstreamServiceTrafficDistribution: ""
+
   # -- If false, it will bind 0.0.0.0, otherwise dnsServer and localDns will be used. https://github.com/bottlerocket-os/bottlerocket/issues/3711#issuecomment-1907087528
   bindIp: false
 
@@ -75,7 +79,12 @@ config:
   upstreamServers: "__PILLAR__UPSTREAM__SERVERS__"
 
   # -- Allows for configuration of upstream server forwarding for the default server block
-  upstreamForwardConfig: {}
+  upstreamForwardConfig: []
+
+  # -- Extra `forward` options for the cluster domain and reverse zones (forwarded to the cluster DNS),
+  # e.g. `failfast_all_unhealthy_upstreams` to answer SERVFAIL at once instead of waiting when no
+  # upstream is healthy.
+  clusterDnsForwardConfig: []
 
 cacheWarmer:
   # -- Run a sidecar that keeps `domains` cached and fresh on every node.
